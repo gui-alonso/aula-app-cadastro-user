@@ -51,6 +51,16 @@ export default function UserFormScreen() {
             // Salva a lista atualizada no AsyncStorage
             await AsyncStorage.setItem('users', JSON.stringify(users));
 
+            // Limpa o formulário
+            setName('');
+            setEmail('');
+            setPassword('');
+            setErrors({});
+
+            Alert.alert("Sucesso", "Usuário salvo com sucesso!",
+                [{ text: "OK", onPress: () => navigation.navigate('UserList')}]
+            )
+
             // Navega de volta para a tela de lista
             navigation.navigate('UserList');
 
