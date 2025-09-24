@@ -1,7 +1,10 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, Button, StyleSheet, SafeAreaView, TouchableOpacity, Alert } from "react-native";
+import { View, Text, TextInput, StyleSheet, SafeAreaView, TouchableOpacity, Alert } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios from "axios"; // Importa o axios
+
+// URL base da sua API. Mantenha a mesma do UserListScreen.js
+const API_URL = 'http://192.168.2.16:3000'; 
 
 export default function UserFormScreen() {
     const navigation = useNavigation();
@@ -10,7 +13,7 @@ export default function UserFormScreen() {
     const [password, setPassword] = useState('');
     const [errors, setErrors] = useState({});
 
-    // Função para validar e salvar o usuário
+    // Função para validar e enviar o usuário para a API
     const handleSave = async () => {
         let newErrors = {};
         if (name.trim() === "") {
@@ -33,40 +36,37 @@ export default function UserFormScreen() {
         }
 
         const newUser = {
-            id: Date.now(),
             name,
             email,
-            // A senha é apenas para demonstração. Não deve ser salva em produção.
             password,
         };
 
         try {
-            // Carrega os usuários existentes do AsyncStorage
-            const storedUsers = await AsyncStorage.getItem('users');
-            const users = storedUsers ? JSON.parse(storedUsers) : [];
-            
-            // Adiciona o novo usuário à lista
-            users.push(newUser);
-            
-            // Salva a lista atualizada no AsyncStorage
-            await AsyncStorage.setItem('users', JSON.stringify(users));
+            // Faz uma requisição POST para o seu backend
+            const response = await axios.post(`${API_URL}/api/users`, newUser);
 
-            // Limpa o formulário
-            setName('');
-            setEmail('');
-            setPassword('');
-            setErrors({});
-
-            Alert.alert("Sucesso", "Usuário salvo com sucesso!",
-                [{ text: "OK", onPress: () => navigation.navigate('UserList')}]
-            )
-
-            // Navega de volta para a tela de lista
-            navigation.navigate('UserList');
+            if (response.status === 201) {
+                // Sucesso: Limpa o formulário e exibe um alerta
+                setName('');
+                setEmail('');
+                setPassword('');
+                setErrors({});
+                
+                Alert.alert(
+                    "Sucesso",
+                    "Usuário cadastrado com sucesso!",
+                    [{ text: "OK", onPress: () => navigation.navigate('UserList') }]
+                );
+            }
 
         } catch (e) {
-            Alert.alert("Erro", "Falha ao salvar o usuário. Tente novamente.");
-            console.error("Falha ao salvar dados no AsyncStorage", e);
+            // Lida com erros da requisição, como email já cadastrado, etc.
+            if (e.response && e.response.data && e.response.data.error) {
+                Alert.alert("Erro", e.response.data.error);
+            } else {
+                Alert.alert("Erro", "Falha ao cadastrar o usuário. Tente novamente.");
+            }
+            console.error("Falha ao salvar usuário na API", e);
         }
     };
 
