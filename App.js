@@ -4,21 +4,24 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import UserFormScreen from './screens/UserFormScreen';
 import UserListScreen from './screens/UserListScreen';
+import LoginScreen from './screens/LoginScreen'; 
 
-// cria o "stack navigation", que organiza a navegação
 const Stack = createNativeStackNavigator();
 
 export default function App() {
   return (
     <NavigationContainer>
-      {/* CORREÇÃO: Altera a tela inicial para "UserList" */}
-      <Stack.Navigator initialRouteName="UserList">
+      <Stack.Navigator initialRouteName="Login">
+        <Stack.Screen 
+          name="Login"
+          component={LoginScreen}
+          options={{ headerShown: true }}
+        />
         <Stack.Screen 
           name="UserList" 
           component={UserListScreen} 
           options={{ title: 'Lista de Usuários' }}
         />
-        
         <Stack.Screen 
           name="UserForm" 
           component={UserFormScreen} 
