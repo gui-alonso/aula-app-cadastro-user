@@ -30,7 +30,7 @@ export default function LoginScreen() {
         }
 
         try {
-            const response = await axios.post(`${API_URL}/api/login`, { email, password });
+            const response = await axios.post(`${API_URL}/api/login`, { email, senha: password });
 
             if (response.status === 200) {
                 const { name, role } = response.data;

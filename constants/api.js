@@ -1,3 +1,3 @@
 // A URL da sua API. Mude o IP para o da sua máquina local
 // ou para o da API de produção quando for o caso.
-export const API_URL = 'http://10.173.102.127:3000';
+export const API_URL = 'http://192.168.2.13:3000';

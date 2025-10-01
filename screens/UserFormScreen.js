@@ -45,9 +45,9 @@ export default function UserFormScreen() {
     }
 
     const newUser = {
-      name,
-      email,
-      password,
+      nome: name,
+      email: email,
+      senha: password,
     };
 
     try {
